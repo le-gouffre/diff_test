@@ -10,9 +10,9 @@ jobs:
       run:
         shell: cmd
     outputs:
-      PACKAGE_PATH: ${{ steps.export.outputs.PACKAGE_PATH }}
-      PACKAGE_NAME: ${{ steps.export.outputs.PACKAGE_NAME }}
-      PACKAGE_VERSION: ${{ steps.export.outputs.PACKAGE_VERSION }}
+      package_path: ${{ steps.export.outputs.PACKAGE_PATH }}
+      package_name: ${{ steps.export.outputs.PACKAGE_NAME }}
+      package_version: ${{ steps.export.outputs.PACKAGE_VERSION }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,22 +46,22 @@ jobs:
     defaults:
       run:
         shell: cmd
-    env:
-        PACKAGE_PATH: ${{ needs.get_commit_diff.outputs.PACKAGE_PATH }}
-        PACKAGE_NAME: ${{ needs.get_commit_diff.outputs.PACKAGE_NAME }}
-        PACKAGE_VERSION: ${{ needs.get_commit_diff.outputs.PACKAGE_VERSION }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Debug Outputs from Previous Job
         run: |
-          echo "DEBUG: PACKAGE_PATH: %PACKAGE_PATH%"
-          echo "DEBUG: PACKAGE_NAME: %PACKAGE_NAME%"
-          echo "DEBUG: PACKAGE_VERSION: %PACKAGE_VERSION%"
+          echo "DEBUG: PACKAGE_PATH: ${{ needs.get_commit_diff.outputs.package_path }}"
+          echo "DEBUG: PACKAGE_NAME: ${{ needs.get_commit_diff.outputs.package_name }}"
+          echo "DEBUG: PACKAGE_VERSION: ${{ needs.get_commit_diff.outputs.package_version }}"
 
       - name: Navigate to PACKAGE_PATH and list contents
         run: |
-          cd "%PACKAGE_PATH%"
-          dir
+          if exist "${{ needs.get_commit_diff.outputs.package_path }}" (
+            cd "${{ needs.get_commit_diff.outputs.package_path }}"
+            dir
+          ) else (
+            echo Error: PACKAGE_PATH does not exist!
+            exit /b 1
+          )
