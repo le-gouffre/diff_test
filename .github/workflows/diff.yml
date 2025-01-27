@@ -44,13 +44,16 @@ jobs:
           echo Diff content:
           type diff_content.txt || echo "No relevant diffs found."
 
-          REM Correctly format multi-line output for GitHub Actions
-          echo changed_files= >> %GITHUB_OUTPUT%
+          REM Concatenate file paths into a single valid string
+          set "CHANGED_FILES="
           for /F "delims=" %%A in (changed_files.txt) do (
-            echo "%%A" >> %GITHUB_OUTPUT%
+            if NOT "%%A"=="" set "CHANGED_FILES=!CHANGED_FILES! %%A"
           )
+          if NOT "%CHANGED_FILES%"=="" echo changed_files=%CHANGED_FILES%>> %GITHUB_OUTPUT%
 
-          echo diff_content= >> %GITHUB_OUTPUT%
+          REM Concatenate diff content into a single valid string
+          set "DIFF_CONTENT="
           for /F "delims=" %%A in (diff_content.txt) do (
-            echo "%%A" >> %GITHUB_OUTPUT%
+            if NOT "%%A"=="" set "DIFF_CONTENT=!DIFF_CONTENT! %%A"
           )
+          if NOT "%DIFF_CONTENT%"=="" echo diff_content=%DIFF_CONTENT%>> %GITHUB_OUTPUT%
