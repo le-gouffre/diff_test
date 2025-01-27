@@ -9,6 +9,10 @@ jobs:
     defaults:
       run:
         shell: cmd
+    outputs:
+      package_path: ${{ steps.detect.outputs.PACKAGE_PATH }}
+      package_name: ${{ steps.detect.outputs.PACKAGE_NAME }}
+      package_version: ${{ steps.detect.outputs.PACKAGE_VERSION }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,6 +22,7 @@ jobs:
           python -m pip install requests
 
       - name: Run script to get commit diff
+        id: detect
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -28,8 +33,24 @@ jobs:
             echo "Files changed: %PACKAGE_PATH%"
             echo "Files changed: %PACKAGE_NAME%"
             echo "Files changed: %PACKAGE_VERSION%"
+            echo "PACKAGE_NAME=%PACKAGE_NAME%" >> %GITHUB_OUTPUT%
+            echo "PACKAGE_VERSION=%PACKAGE_VERSION%" >> %GITHUB_OUTPUT%
+            echo "PACKAGE_VERSION=%PACKAGE_PATH%" >> %GITHUB_OUTPUT%    
+
+  use_package_info:
+    needs: get_commit_diff
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: cmd
+    steps:
+      - name: Print package variables from previous job
+        run: |
+          echo "PACKAGE_PATH: ${{ needs.get_commit_diff.outputs.package_path }}"
+          echo "PACKAGE_NAME: ${{ needs.get_commit_diff.outputs.package_name }}"
+          echo "PACKAGE_VERSION: ${{ needs.get_commit_diff.outputs.package_version }}"
 
       - name: Navigate to PACKAGE_PATH and list contents
         run: |
-              cd %PACKAGE_PATH%
-              dir
+          cd "${{ needs.get_commit_diff.outputs.package_path }}"
+          dir
