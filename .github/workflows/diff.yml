@@ -10,9 +10,9 @@ jobs:
       run:
         shell: cmd
     outputs:
-      package_path: ${{ steps.detect.outputs.PACKAGE_PATH }}
-      package_name: ${{ steps.detect.outputs.PACKAGE_NAME }}
-      package_version: ${{ steps.detect.outputs.PACKAGE_VERSION }}
+      package_path: ${{ steps.detect.outputs.package_path }}
+      package_name: ${{ steps.detect.outputs.package_name }}
+      package_version: ${{ steps.detect.outputs.package_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,15 +27,15 @@ jobs:
         run: |
           python git_changes_detector.py
 
-      - name: Use PACKAGE_PATH in another step
+      - name: Export package variables
         id: detect
         run: |
-            echo "Files changed: %PACKAGE_PATH%"
-            echo "Files changed: %PACKAGE_NAME%"
-            echo "Files changed: %PACKAGE_VERSION%"
-            echo "PACKAGE_NAME=%PACKAGE_NAME%" >> %GITHUB_OUTPUT%
-            echo "PACKAGE_VERSION=%PACKAGE_VERSION%" >> %GITHUB_OUTPUT%
-            echo "PACKAGE_VERSION=%PACKAGE_PATH%" >> %GITHUB_OUTPUT%    
+          echo "Files changed: %PACKAGE_PATH%"
+          echo "Files changed: %PACKAGE_NAME%"
+          echo "Files changed: %PACKAGE_VERSION%"
+          echo "package_path=%PACKAGE_PATH%" >> %GITHUB_OUTPUT%
+          echo "package_name=%PACKAGE_NAME%" >> %GITHUB_OUTPUT%
+          echo "package_version=%PACKAGE_VERSION%" >> %GITHUB_OUTPUT%
 
   use_package_info:
     needs: get_commit_diff
