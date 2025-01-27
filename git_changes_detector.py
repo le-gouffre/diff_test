@@ -30,6 +30,10 @@ def get_commit_data():
         print(f"Error retrieving commit data: {e}", file=sys.stderr)
         return [], ""
 
+def normalize_path(path):
+    """Ensures PACKAGE_PATH uses Windows-style backslashes."""
+    return path.replace("/", "\\")
+
 def extract_package_name(package_path):
     """Extracts the package name from the PACKAGE_PATH."""
     path_parts = package_path.replace("\\", "/").split("/")
@@ -49,7 +53,7 @@ def main():
     
     # Filter PACKAGE_PATH to include only config.yml changes
     config_files = [file for file in changed_files if file.endswith("config.yml")]
-    package_path = " ".join(config_files) if config_files else ""
+    package_path = normalize_path(" ".join(config_files)) if config_files else ""
     
     package_name = extract_package_name(config_files[0]) if config_files else ""
     package_version = extract_package_version(diff_content) if config_files else ""
