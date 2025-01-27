@@ -13,22 +13,41 @@ jobs:
       changed_files: ${{ steps.detect.outputs.changed_files }}
       diff_content: ${{ steps.detect.outputs.diff_content }}
     steps:
-      - name: Checkout repository
+      - name: Checkout repository with full history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensures we have history to compare
+          fetch-depth: 0  # Fetch full history to ensure git log works
 
       - name: Detect changed files
         id: detect
         run: |
-            git diff origin/main origin/${GITHUB_HEAD_REF} > changed.files.txt
-            git diff --name-only origin/main origin/${GITHUB_HEAD_REF}> changed_contents.txt
+          REM Get changed files from the last commit
+          git log --name-only -n 1 --pretty=format: > changed_files_raw.txt
 
-            git diff origin/main origin/${GITHUB_HEAD_REF}
-            git diff --name-only origin/main origin/${GITHUB_HEAD_REF}
+          REM Filter only relevant files
+          type changed_files_raw.txt | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > changed_files.txt
 
-            git diff 
-            git diff --name-only
+          REM Get diff content for relevant files using git show
+          git show --pretty="" --name-only HEAD | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > diff_content.txt
 
-            type changed.files.txt
-            type changed_contents.txt
+          REM Handle empty outputs to prevent GitHub Actions errors
+          for %%F in (changed_files.txt) do if %%~zF EQU 0 echo EMPTY > changed_files.txt
+          for %%F in (diff_content.txt) do if %%~zF EQU 0 echo EMPTY > diff_content.txt
+
+          echo Changed files:
+          type changed_files.txt
+
+          echo Diff content:
+          type diff_content.txt
+
+          REM Write changed files to GITHUB_OUTPUT properly
+          echo changed_files= >> %GITHUB_OUTPUT%
+          for /F "delims=" %%A in (changed_files.txt) do (
+            if NOT "%%A"=="EMPTY" echo %%A>> %GITHUB_OUTPUT%
+          )
+
+          REM Write diff content to GITHUB_OUTPUT properly
+          echo diff_content= >> %GITHUB_OUTPUT%
+          for /F "delims=" %%A in (diff_content.txt) do (
+            if NOT "%%A"=="EMPTY" echo %%A>> %GITHUB_OUTPUT%
+          )
