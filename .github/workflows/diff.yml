@@ -21,5 +21,8 @@ jobs:
       - name: Detect changed files
         id: detect
         run: |
-            git diff HEAD^ HEAD 
-            git diff --name-only HEAD^ HEAD
+            git diff HEAD^ HEAD > changed.files.txt
+            git diff --name-only HEAD^ HEAD > changed_contents.txt
+
+            type changed.files.txt
+            type changed_contents.txt
