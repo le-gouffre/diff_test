@@ -1,0 +1,24 @@
+sources:
+  "8.1.1":
+    url: "url_8.1.1.zip"
+    strip_root: false
+  "8.1.2":
+    url: "url_8.1.2.zip"
+    strip_root: false
+  "9.0.1":
+    url: "url_9.0.1.zip"
+    strip_root: false
+  "9.1.0":
+    url: "url_9.1.0.zip"
+    strip_root: false
+binaries:
+  "8.1.1":
+    bin_folder: "bin"
+  "8.1.2":
+    bin_folder: "bin"
+  "9.0.1":
+    bin_folder: "bin"
+  "9.1.0":
+    bin_folder: "bin"
+  "9.2.0":
+    bin_folder: "bin"
