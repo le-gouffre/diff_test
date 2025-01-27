@@ -7,8 +7,9 @@ def get_commit_data():
     repo = os.getenv("GITHUB_REPOSITORY")
     commit_sha = os.getenv("GITHUB_SHA")
     token = os.getenv("GITHUB_TOKEN")
+    workspace = os.getenv("GITHUB_WORKSPACE")  # Get the absolute workspace path
     
-    if not repo or not commit_sha or not token:
+    if not repo or not commit_sha or not token or not workspace:
         print("Missing required environment variables.", file=sys.stderr)
         sys.exit(1)
     
@@ -20,7 +21,7 @@ def get_commit_data():
         response.raise_for_status()
         commit_data = response.json()
         
-        changed_files = [file["filename"] for file in commit_data.get("files", [])]
+        changed_files = [os.path.join(workspace, file["filename"]) for file in commit_data.get("files", [])]
         diff_content = requests.get(url, headers={"Authorization": f"token {token}", "Accept": "application/vnd.github.v3.diff"}).text.strip()
         
         return changed_files, diff_content
@@ -32,7 +33,7 @@ def main():
     changed_files, diff_content = get_commit_data()
     
     if changed_files:
-        package_path = " ".join(changed_files)  # Store the changed file paths in PACKAGE_PATH
+        package_path = " ".join(changed_files)  # Store the full absolute paths in PACKAGE_PATH
         print(f"PACKAGE_PATH={package_path}")
         print("Changed files:")
         for file in changed_files:
