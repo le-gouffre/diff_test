@@ -59,9 +59,9 @@ jobs:
 
       - name: Debug Outputs from Previous Job
         run: |
-          echo DEBUG: PACKAGE_PATH: %PACKAGE_PATH%
-          echo DEBUG: PACKAGE_NAME: %PACKAGE_NAME%
-          echo DEBUG: PACKAGE_VERSION: %PACKAGE_VERSION%
+          echo DEBUG: PACKAGE_PATH=%PACKAGE_PATH%
+          echo DEBUG: PACKAGE_NAME=%PACKAGE_NAME%
+          echo DEBUG: PACKAGE_VERSION=%PACKAGE_VERSION%
 
       - name: Navigate to PACKAGE_PATH and list contents
         run: |
