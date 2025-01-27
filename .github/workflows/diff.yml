@@ -10,9 +10,9 @@ jobs:
       run:
         shell: cmd
     outputs:
-      package_path: ${{ steps.export.outputs.PACKAGE_PATH }}
-      package_name: ${{ steps.export.outputs.PACKAGE_NAME }}
-      package_version: ${{ steps.export.outputs.PACKAGE_VERSION }}
+      PACKAGE_PATH: ${{ steps.export.outputs.PACKAGE_PATH }}
+      PACKAGE_NAME: ${{ steps.export.outputs.PACKAGE_NAME }}
+      PACKAGE_VERSION: ${{ steps.export.outputs.PACKAGE_VERSION }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,9 +36,9 @@ jobs:
       - name: Export package variables
         id: export
         run: |
-          echo "package_path=%PACKAGE_PATH%" >> "%GITHUB_OUTPUT%"
-          echo "package_name=%PACKAGE_NAME%" >> "%GITHUB_OUTPUT%"
-          echo "package_version=%PACKAGE_VERSION%" >> "%GITHUB_OUTPUT%"
+          echo "PACKAGE_PATH=%PACKAGE_PATH%" >> "%GITHUB_OUTPUT%"
+          echo "PACKAGE_NAME=%PACKAGE_NAME%" >> "%GITHUB_OUTPUT%"
+          echo "PACKAGE_VERSION=%PACKAGE_VERSION%" >> "%GITHUB_OUTPUT%"
 
   use_package_info:
     needs: get_commit_diff
@@ -47,6 +47,9 @@ jobs:
       run:
         shell: cmd
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Debug Outputs from Previous Job
         run: |
           echo "DEBUG: PACKAGE_PATH: ${{ needs.get_commit_diff.outputs.PACKAGE_PATH }}"
