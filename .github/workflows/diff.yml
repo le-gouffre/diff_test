@@ -57,3 +57,22 @@ jobs:
             if NOT "%%A"=="" set "DIFF_CONTENT=!DIFF_CONTENT! %%A"
           )
           if NOT "%DIFF_CONTENT%"=="" echo diff_content=%DIFF_CONTENT%>> %GITHUB_OUTPUT%
+
+
+  verify_changes:
+    needs: detect_package_information
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: cmd
+    steps:
+      - name: Verify that changes were detected
+        run: |
+          echo "Verifying detected changes..."
+          if "${{ needs.detect_package_information.outputs.changed_files }}"=="" (
+            echo "No changes detected."
+            exit /b 1
+          ) else (
+            echo "Changed files: ${{ needs.detect_package_information.outputs.changed_files }}"
+            echo "Diff content: ${{ needs.detect_package_information.outputs.diff_content }}"
+          )
