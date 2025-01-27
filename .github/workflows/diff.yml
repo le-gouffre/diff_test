@@ -16,16 +16,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # Ensure we have history to compare
+          fetch-depth: 2  # Ensures we have history to compare
 
-      - name: Detect changed files in tools directory
+      - name: Detect changed files
         id: detect
         run: |
-          REM Detect changes inside 'tools/' directory and filter for specific files
-          git diff --name-only HEAD^ HEAD | findstr /R /C:"tools/" | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > changed_files.txt
-          git diff HEAD^ HEAD | findstr /R /C:"tools/" | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > diff_content.txt
+          REM Get all changed files
+          git diff --name-only HEAD^ HEAD > changed_files_raw.txt
 
-          REM Check if files are empty and set a placeholder
+          REM Filter only relevant files
+          type changed_files_raw.txt | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > changed_files.txt
+
+          REM Get diff content for relevant files
+          git diff HEAD^ HEAD > diff_content_raw.txt
+          type diff_content_raw.txt | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > diff_content.txt
+
+          REM Handle empty outputs
           for %%F in (changed_files.txt) do if %%~zF EQU 0 echo EMPTY > changed_files.txt
           for %%F in (diff_content.txt) do if %%~zF EQU 0 echo EMPTY > diff_content.txt
 
@@ -45,4 +51,6 @@ jobs:
           echo diff_content= >> %GITHUB_OUTPUT%
           for /F "delims=" %%A in (diff_content.txt) do (
             if NOT "%%A"=="EMPTY" echo %%A>> %GITHUB_OUTPUT%
+          )
+
           )
