@@ -26,15 +26,15 @@ jobs:
 
           echo Changed files:
           type changed_files.txt
+          
           echo Diff content:
           type diff_content.txt
 
-          REM Store the list of changed files as an output
-          echo "changed_files<<EOF" >> %GITHUB_OUTPUT%
-          type changed_files.txt >> %GITHUB_OUTPUT%
-          echo "EOF" >> %GITHUB_OUTPUT%
+          REM Append each line of changed files to GITHUB_OUTPUT
+          echo changed_files= >> %GITHUB_OUTPUT%
+          for /F "delims=" %%A in (changed_files.txt) do echo %%A>> %GITHUB_OUTPUT%
 
-          REM Store the diff content as an output
-          echo "diff_content<<EOF" >> %GITHUB_OUTPUT%
-          type diff_content.txt >> %GITHUB_OUTPUT%
-          echo "EOF" >> %GITHUB_OUTPUT%
+          REM Append each line of diff content to GITHUB_OUTPUT
+          echo diff_content= >> %GITHUB_OUTPUT%
+          for /F "delims=" %%A in (diff_content.txt) do echo %%A>> %GITHUB_OUTPUT%
+
