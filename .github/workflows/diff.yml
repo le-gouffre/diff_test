@@ -46,17 +46,22 @@ jobs:
     defaults:
       run:
         shell: cmd
+    env:
+        PACKAGE_PATH: ${{ needs.get_commit_diff.outputs.PACKAGE_PATH }}
+        PACKAGE_NAME: ${{ needs.get_commit_diff.outputs.PACKAGE_NAME }}
+        PACKAGE_VERSION: ${{ needs.get_commit_diff.outputs.PACKAGE_VERSION }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Debug Outputs from Previous Job
         run: |
-          echo "DEBUG: PACKAGE_PATH: ${{ needs.get_commit_diff.outputs.PACKAGE_PATH }}"
-          echo "DEBUG: PACKAGE_NAME: ${{ needs.get_commit_diff.outputs.PACKAGE_NAME }}"
-          echo "DEBUG: PACKAGE_VERSION: ${{ needs.get_commit_diff.outputs.PACKAGE_VERSION }}"
+          echo "DEBUG: PACKAGE_PATH: %PACKAGE_PATH%"
+          echo "DEBUG: PACKAGE_NAME: %PACKAGE_NAME%"
+          echo "DEBUG: PACKAGE_VERSION: %PACKAGE_VERSION%"
 
       - name: Navigate to PACKAGE_PATH and list contents
         run: |
-          cd "${{ needs.get_commit_diff.outputs.PACKAGE_PATH }}"
+          cd "%PACKAGE_PATH%"
           dir
