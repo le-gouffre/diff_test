@@ -16,38 +16,42 @@ jobs:
       - name: Checkout repository with full history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history to ensure git log works
+          fetch-depth: 0  # Ensures full history is available
 
       - name: Detect changed files
         id: detect
         run: |
-          REM Get changed files from the last commit
-          git log --name-only -n 1 --pretty=format: > changed_files_raw.txt
-
-          REM Filter only relevant files
-          type changed_files_raw.txt | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > changed_files.txt
-
-          REM Get diff content for relevant files using git show
-          git show --pretty="" --name-only HEAD | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > diff_content.txt
-
-          REM Handle empty outputs to prevent GitHub Actions errors
-          for %%F in (changed_files.txt) do if %%~zF EQU 0 echo EMPTY > changed_files.txt
-          for %%F in (diff_content.txt) do if %%~zF EQU 0 echo EMPTY > diff_content.txt
-
-          echo Changed files:
-          type changed_files.txt
-
-          echo Diff content:
-          type diff_content.txt
-
-          REM Write changed files to GITHUB_OUTPUT properly
-          echo changed_files= >> %GITHUB_OUTPUT%
-          for /F "delims=" %%A in (changed_files.txt) do (
-            if NOT "%%A"=="EMPTY" echo %%A>> %GITHUB_OUTPUT%
+          REM Ensure we have history to compare
+          git rev-parse HEAD~1 >nul 2>&1
+          if %ERRORLEVEL% NEQ 0 (
+            echo "No previous commit found, skipping detection"
+            exit /b 0
           )
 
-          REM Write diff content to GITHUB_OUTPUT properly
-          echo diff_content= >> %GITHUB_OUTPUT%
-          for /F "delims=" %%A in (diff_content.txt) do (
-            if NOT "%%A"=="EMPTY" echo %%A>> %GITHUB_OUTPUT%
+          REM Get changed files from the last commit
+          git diff-tree --no-commit-id --name-only -r HEAD > changed_files.txt
+
+          REM Get diff content for changed files
+          git diff HEAD~1 HEAD > diff_content.txt
+
+          REM Check if files are empty and handle GitHub Actions output correctly
+          for %%F in (changed_files.txt) do if %%~zF EQU 0 del changed_files.txt
+          for %%F in (diff_content.txt) do if %%~zF EQU 0 del diff_content.txt
+
+          echo Changed files:
+          type changed_files.txt || echo "No relevant files changed."
+
+          echo Diff content:
+          type diff_content.txt || echo "No relevant diffs found."
+
+          REM Write changed files to GITHUB_OUTPUT only if there are actual changes
+          if exist changed_files.txt (
+            echo changed_files= >> %GITHUB_OUTPUT%
+            for /F "delims=" %%A in (changed_files.txt) do echo %%A>> %GITHUB_OUTPUT%
+          )
+
+          REM Write diff content to GITHUB_OUTPUT only if there are actual changes
+          if exist diff_content.txt (
+            echo diff_content= >> %GITHUB_OUTPUT%
+            for /F "delims=" %%A in (diff_content.txt) do echo %%A>> %GITHUB_OUTPUT%
           )
