@@ -22,5 +22,5 @@ binaries:
     bin_folder: "bin"
   "9.2.0":
     bin_folder: "bin"
-  "9.4.0":
+  "9.5.0":
     bin_folder: "bin"
