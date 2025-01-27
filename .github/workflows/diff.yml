@@ -44,14 +44,13 @@ jobs:
           echo Diff content:
           type diff_content.txt || echo "No relevant diffs found."
 
-          REM Write changed files to GITHUB_OUTPUT only if there are actual changes
-          if exist changed_files.txt (
-            echo changed_files= >> %GITHUB_OUTPUT%
-            for /F "delims=" %%A in (changed_files.txt) do echo %%A>> %GITHUB_OUTPUT%
+          REM Correctly format multi-line output for GitHub Actions
+          echo changed_files= >> %GITHUB_OUTPUT%
+          for /F "delims=" %%A in (changed_files.txt) do (
+            echo "%%A" >> %GITHUB_OUTPUT%
           )
 
-          REM Write diff content to GITHUB_OUTPUT only if there are actual changes
-          if exist diff_content.txt (
-            echo diff_content= >> %GITHUB_OUTPUT%
-            for /F "delims=" %%A in (diff_content.txt) do echo %%A>> %GITHUB_OUTPUT%
+          echo diff_content= >> %GITHUB_OUTPUT%
+          for /F "delims=" %%A in (diff_content.txt) do (
+            echo "%%A" >> %GITHUB_OUTPUT%
           )
