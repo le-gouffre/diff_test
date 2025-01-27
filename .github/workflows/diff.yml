@@ -1,0 +1,40 @@
+name: Build and Publish Conan Package
+
+on: 
+    push:
+
+jobs:
+  detect_package_information:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: cmd
+    outputs:
+      changed_files: ${{ steps.detect.outputs.changed_files }}
+      diff_content: ${{ steps.detect.outputs.diff_content }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Ensures we have history to compare
+
+      - name: Detect changed files in tools directory
+        id: detect
+        run: |
+          git diff --name-only HEAD^ HEAD > changed_files.txt
+          git diff HEAD^ HEAD > diff_content.txt
+
+          echo Changed files:
+          type changed_files.txt
+          echo Diff content:
+          type diff_content.txt
+
+          REM Store the list of changed files as an output
+          echo "changed_files<<EOF" >> %GITHUB_OUTPUT%
+          type changed_files.txt >> %GITHUB_OUTPUT%
+          echo "EOF" >> %GITHUB_OUTPUT%
+
+          REM Store the diff content as an output
+          echo "diff_content<<EOF" >> %GITHUB_OUTPUT%
+          type diff_content.txt >> %GITHUB_OUTPUT%
+          echo "EOF" >> %GITHUB_OUTPUT%
