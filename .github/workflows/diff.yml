@@ -3,6 +3,28 @@ name: Build and Publish Conan Package
 on: 
     push:
 
+    workflow_dispatch:
+        inputs:
+            package_name:
+                description: 'Conan package name'
+                required: true
+                default: '1.0.0'
+                type: string
+            package_version:
+                description: 'Conan package version'
+                required: true
+                default: 'package' 
+                type: string
+            package_path:
+                description: 'Package path'
+                required: true
+                default: ''
+
+env:
+    PACKAGE_NAME: ${{ inputs.package_name }}
+    PACKAGE_VERSION: ${{ inputs.package_version }}
+    PACKAGE_PATH: ${{ inputs.package_path }}
+
 jobs:
   get_commit_diff:
     runs-on: windows-latest
