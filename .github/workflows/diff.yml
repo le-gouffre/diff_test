@@ -16,16 +16,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # Ensures we have history to compare
+          fetch-depth: 2  # Ensure we have history to compare
 
       - name: Detect changed files in tools directory
         id: detect
         run: |
-          git diff --name-only HEAD^ HEAD > changed_files.txt 2>nul
-          if %ERRORLEVEL% NEQ 0 echo No changes detected. > changed_files.txt
+          git diff --name-only HEAD^ HEAD > changed_files.txt
+          git diff HEAD^ HEAD > diff_content.txt
 
-          git diff HEAD^ HEAD > diff_content.txt 2>nul
-          if %ERRORLEVEL% NEQ 0 echo No changes detected. > diff_content.txt
+          for %%F in (changed_files.txt) do if %%~zF EQU 0 echo No changes detected. > changed_files.txt
+          for %%F in (diff_content.txt) do if %%~zF EQU 0 echo No changes detected. > diff_content.txt
 
           echo Changed files:
           type changed_files.txt
@@ -33,11 +33,11 @@ jobs:
           echo Diff content:
           type diff_content.txt
 
-          REM Append each line of changed files to GITHUB_OUTPUT
+          REM Write changed files to GITHUB_OUTPUT
           echo changed_files= >> %GITHUB_OUTPUT%
           for /F "delims=" %%A in (changed_files.txt) do echo %%A>> %GITHUB_OUTPUT%
 
-          REM Append each line of diff content to GITHUB_OUTPUT
+          REM Write diff content to GITHUB_OUTPUT
           echo diff_content= >> %GITHUB_OUTPUT%
           for /F "delims=" %%A in (diff_content.txt) do echo %%A>> %GITHUB_OUTPUT%
 
