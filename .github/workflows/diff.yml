@@ -21,12 +21,15 @@ jobs:
       - name: Detect changed files in tools directory
         id: detect
         run: |
-          git diff --name-only HEAD^ HEAD > changed_files.txt
-          git diff HEAD^ HEAD > diff_content.txt
+          git diff --name-only HEAD^ HEAD > changed_files.txt 2>nul
+          if %ERRORLEVEL% NEQ 0 echo No changes detected. > changed_files.txt
+
+          git diff HEAD^ HEAD > diff_content.txt 2>nul
+          if %ERRORLEVEL% NEQ 0 echo No changes detected. > diff_content.txt
 
           echo Changed files:
           type changed_files.txt
-          
+
           echo Diff content:
           type diff_content.txt
 
