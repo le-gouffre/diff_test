@@ -13,3 +13,5 @@ versions:
     folder: all
   "9.5.0":
     folder: all
+  "9.6.9":
+    folder: all

@@ -32,3 +32,5 @@ jobs:
       - name: Use PACKAGE_PATH in another step
         run: |
             echo "Files changed: %PACKAGE_PATH%"
+            echo "Files changed: %PACKAGE_NAME%"
+            echo "Files changed: %PACKAGE_VERSION%"

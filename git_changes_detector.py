@@ -32,9 +32,10 @@ def get_commit_data():
 
 def extract_package_name(package_path):
     """Extracts the package name from the PACKAGE_PATH."""
-    path_parts = package_path.split(os.sep)
-    if len(path_parts) >= 3:
-        return f"{path_parts[-3]}_{path_parts[-2]}"
+    path_parts = package_path.replace("\\", "/").split("/")
+    if "tools" in path_parts and len(path_parts) >= 3:
+        tools_index = path_parts.index("tools")
+        return f"{path_parts[tools_index+1]}_{path_parts[tools_index+2]}"
     return ""
 
 def extract_package_version(diff_content):
