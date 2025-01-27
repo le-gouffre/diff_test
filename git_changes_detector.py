@@ -51,12 +51,12 @@ def extract_package_version(diff_content):
 def main():
     changed_files, diff_content = get_commit_data()
     
-    # Filter PACKAGE_PATH to include only config.yml changes
-    config_files = [file for file in changed_files if file.endswith("config.yml")]
-    package_path = normalize_path(" ".join(config_files)) if config_files else ""
+    # Filter PACKAGE_PATH to include only config.yml changes and extract directory
+    config_files = [os.path.dirname(file) for file in changed_files if file.endswith("config.yml")]
+    package_path = normalize_path(config_files[0]) if config_files else ""
     
-    package_name = extract_package_name(config_files[0]) if config_files else ""
-    package_version = extract_package_version(diff_content) if config_files else ""
+    package_name = extract_package_name(package_path) if package_path else ""
+    package_version = extract_package_version(diff_content) if package_path else ""
     
     print(f"PACKAGE_PATH={package_path}")
     print(f"PACKAGE_NAME={package_name}")
