@@ -36,11 +36,12 @@ jobs:
       - name: Export package variables
         id: export
         run: |
-          echo PACKAGE_PATH=%PACKAGE_PATH% >> "%GITHUB_OUTPUT%"
-          echo PACKAGE_NAME=%PACKAGE_NAME% >> "%GITHUB_OUTPUT%"
-          echo PACKAGE_VERSION=%PACKAGE_VERSION% >> "%GITHUB_OUTPUT%"
-          echo DEBUG: Writing to GITHUB_OUTPUT...
-          type "%GITHUB_OUTPUT%"
+            echo PACKAGE_PATH=%PACKAGE_PATH: =% >> %GITHUB_OUTPUT%
+            echo PACKAGE_NAME=%PACKAGE_NAME: =% >> %GITHUB_OUTPUT%
+            echo PACKAGE_VERSION=%PACKAGE_VERSION: =% >> %GITHUB_OUTPUT%
+            echo DEBUG: Writing to GITHUB_OUTPUT...
+            type %GITHUB_OUTPUT%
+        
 
   use_package_info:
     needs: get_commit_diff
