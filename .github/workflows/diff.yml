@@ -34,3 +34,8 @@ jobs:
             echo "Files changed: %PACKAGE_PATH%"
             echo "Files changed: %PACKAGE_NAME%"
             echo "Files changed: %PACKAGE_VERSION%"
+
+      - name: Navigate to PACKAGE_PATH and list contents
+        run: |
+              cd %PACKAGE_PATH%
+              dir
