@@ -21,36 +21,5 @@ jobs:
       - name: Detect changed files
         id: detect
         run: |
-          REM Get all changed files
-          git diff --name-only HEAD^ HEAD > changed_files_raw.txt
-
-          REM Filter only relevant files
-          type changed_files_raw.txt | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > changed_files.txt
-
-          REM Get diff content for relevant files
-          git diff HEAD^ HEAD > diff_content_raw.txt
-          type diff_content_raw.txt | findstr /R /C:"conanfile.py" /C:"conandata.yml" /C:"config.yml" > diff_content.txt
-
-          REM Handle empty outputs
-          for %%F in (changed_files.txt) do if %%~zF EQU 0 echo EMPTY > changed_files.txt
-          for %%F in (diff_content.txt) do if %%~zF EQU 0 echo EMPTY > diff_content.txt
-
-          echo Changed files:
-          type changed_files.txt
-
-          echo Diff content:
-          type diff_content.txt
-
-          REM Write changed files to GITHUB_OUTPUT properly
-          echo changed_files= >> %GITHUB_OUTPUT%
-          for /F "delims=" %%A in (changed_files.txt) do (
-            if NOT "%%A"=="EMPTY" echo %%A>> %GITHUB_OUTPUT%
-          )
-
-          REM Write diff content to GITHUB_OUTPUT properly
-          echo diff_content= >> %GITHUB_OUTPUT%
-          for /F "delims=" %%A in (diff_content.txt) do (
-            if NOT "%%A"=="EMPTY" echo %%A>> %GITHUB_OUTPUT%
-          )
-
-          )
+            git diff HEAD^ HEAD 
+            git diff --name-only HEAD^ HEAD
