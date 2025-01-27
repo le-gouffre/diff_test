@@ -10,9 +10,9 @@ jobs:
       run:
         shell: cmd
     outputs:
-      package_path: ${{ steps.export.outputs.package_path }}
-      package_name: ${{ steps.export.outputs.package_name }}
-      package_version: ${{ steps.export.outputs.package_version }}
+      package_path: ${{ steps.export.outputs.PACKAGE_PATH }}
+      package_name: ${{ steps.export.outputs.PACKAGE_NAME }}
+      package_version: ${{ steps.export.outputs.PACKAGE_VERSION }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -49,11 +49,11 @@ jobs:
     steps:
       - name: Debug Outputs from Previous Job
         run: |
-          echo "DEBUG: PACKAGE_PATH: ${{ needs.get_commit_diff.outputs.package_path }}"
-          echo "DEBUG: PACKAGE_NAME: ${{ needs.get_commit_diff.outputs.package_name }}"
-          echo "DEBUG: PACKAGE_VERSION: ${{ needs.get_commit_diff.outputs.package_version }}"
+          echo "DEBUG: PACKAGE_PATH: ${{ needs.get_commit_diff.outputs.PACKAGE_PATH }}"
+          echo "DEBUG: PACKAGE_NAME: ${{ needs.get_commit_diff.outputs.PACKAGE_NAME }}"
+          echo "DEBUG: PACKAGE_VERSION: ${{ needs.get_commit_diff.outputs.PACKAGE_VERSION }}"
 
       - name: Navigate to PACKAGE_PATH and list contents
         run: |
-          cd "${{ needs.get_commit_diff.outputs.package_path }}"
+          cd "${{ needs.get_commit_diff.outputs.PACKAGE_PATH }}"
           dir
