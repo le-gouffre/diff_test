@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # Ensures we have history to compare
+          fetch-depth: 0  # Ensures we have history to compare
 
       - name: Detect changed files
         id: detect
