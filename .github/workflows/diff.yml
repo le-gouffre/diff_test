@@ -5,7 +5,7 @@ on:
 
 jobs:
   get_commit_diff:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     defaults:
       run:
         shell: cmd
@@ -29,16 +29,18 @@ jobs:
 
       - name: Debug Environment Variables
         run: |
-          echo "DEBUG: PACKAGE_PATH=%PACKAGE_PATH%"
-          echo "DEBUG: PACKAGE_NAME=%PACKAGE_NAME%"
-          echo "DEBUG: PACKAGE_VERSION=%PACKAGE_VERSION%"
+          echo DEBUG: PACKAGE_PATH=%PACKAGE_PATH%
+          echo DEBUG: PACKAGE_NAME=%PACKAGE_NAME%
+          echo DEBUG: PACKAGE_VERSION=%PACKAGE_VERSION%
 
       - name: Export package variables
         id: export
         run: |
-          echo "PACKAGE_PATH=%PACKAGE_PATH%" >> "%GITHUB_OUTPUT%"
-          echo "PACKAGE_NAME=%PACKAGE_NAME%" >> "%GITHUB_OUTPUT%"
-          echo "PACKAGE_VERSION=%PACKAGE_VERSION%" >> "%GITHUB_OUTPUT%"
+          echo PACKAGE_PATH=%PACKAGE_PATH% >> "%GITHUB_OUTPUT%"
+          echo PACKAGE_NAME=%PACKAGE_NAME% >> "%GITHUB_OUTPUT%"
+          echo PACKAGE_VERSION=%PACKAGE_VERSION% >> "%GITHUB_OUTPUT%"
+          echo DEBUG: Writing to GITHUB_OUTPUT...
+          type "%GITHUB_OUTPUT%"
 
   use_package_info:
     needs: get_commit_diff
@@ -52,11 +54,16 @@ jobs:
 
       - name: Debug Outputs from Previous Job
         run: |
-          echo "DEBUG: PACKAGE_PATH: ${{ needs.get_commit_diff.outputs.package_path }}"
-          echo "DEBUG: PACKAGE_NAME: ${{ needs.get_commit_diff.outputs.package_name }}"
-          echo "DEBUG: PACKAGE_VERSION: ${{ needs.get_commit_diff.outputs.package_version }}"
+          echo DEBUG: PACKAGE_PATH: "${{ needs.get_commit_diff.outputs.package_path }}"
+          echo DEBUG: PACKAGE_NAME: "${{ needs.get_commit_diff.outputs.package_name }}"
+          echo DEBUG: PACKAGE_VERSION: "${{ needs.get_commit_diff.outputs.package_version }}"
 
       - name: Navigate to PACKAGE_PATH and list contents
         run: |
+          if exist "${{ needs.get_commit_diff.outputs.package_path }}" (
             cd "${{ needs.get_commit_diff.outputs.package_path }}"
             dir
+          ) else (
+            echo Error: PACKAGE_PATH does not exist!
+            exit /b 1
+          )
