@@ -24,5 +24,11 @@ jobs:
             git diff HEAD^ HEAD > changed.files.txt
             git diff --name-only HEAD^ HEAD > changed_contents.txt
 
+            git diff HEAD^ HEAD 
+            git diff --name-only HEAD^ HEAD
+
+            git diff 
+            git diff --name-only
+
             type changed.files.txt
             type changed_contents.txt
