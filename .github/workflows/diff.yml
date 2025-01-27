@@ -22,13 +22,13 @@ jobs:
           python -m pip install requests
 
       - name: Run script to get commit diff
-        id: detect
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python git_changes_detector.py
 
       - name: Use PACKAGE_PATH in another step
+        id: detect
         run: |
             echo "Files changed: %PACKAGE_PATH%"
             echo "Files changed: %PACKAGE_NAME%"
