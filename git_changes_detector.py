@@ -35,6 +35,13 @@ def main():
     if changed_files:
         package_path = " ".join(changed_files)  # Store the full absolute paths in PACKAGE_PATH
         print(f"PACKAGE_PATH={package_path}")
+
+        # Export PACKAGE_PATH for use in subsequent GitHub Actions steps
+        github_env = os.getenv("GITHUB_ENV")
+        if github_env:
+            with open(github_env, "a") as env_file:
+                env_file.write(f"PACKAGE_PATH={package_path}\n")
+        
         print("Changed files:")
         for file in changed_files:
             print(file)

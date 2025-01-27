@@ -28,3 +28,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python git_changes_detector.py
+
+      - name: Use PACKAGE_PATH in another step
+        run: |
+            echo "Files changed: %PACKAGE_PATH%"
