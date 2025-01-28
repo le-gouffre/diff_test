@@ -27,6 +27,7 @@ env:
 
 jobs:
   get_commit_diff:
+    if: github.event_name != 'workflow_dispatch'
     runs-on: windows-latest
     defaults:
       run:
@@ -38,20 +39,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Restore Python Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: pip-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
-
-      - name: Cache Python dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: pip-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            pip-${{ runner.os }}-
 
       - name: Install dependencies
         run: |
@@ -86,9 +73,9 @@ jobs:
       run:
         shell: cmd
     env:
-        PACKAGE_PATH: "${{ needs.get_commit_diff.outputs.package_path }}"
-        PACKAGE_NAME: "${{ needs.get_commit_diff.outputs.package_name }}"
-        PACKAGE_VERSION: "${{ needs.get_commit_diff.outputs.package_version }}"
+        PACKAGE_PATH: "${{ needs.get_commit_diff.outputs.package_path || inputs.PACKAGE_PATH  }}"
+        PACKAGE_NAME: "${{ needs.get_commit_diff.outputs.package_name || inputs.PACKAGE_NAME }}"
+        PACKAGE_VERSION: "${{ needs.get_commit_diff.outputs.package_version || inputs.PACKAGE_VERSION }}"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
