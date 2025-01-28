@@ -68,7 +68,7 @@ jobs:
 
   use_package_info:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
-    needs: get_commit_diff
+    needs: [get_commit_diff]
     runs-on: windows-latest
     defaults:
       run:
