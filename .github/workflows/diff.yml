@@ -95,3 +95,34 @@ jobs:
             echo Error: PACKAGE_PATH does not exist!
             exit /b 1
           )
+
+
+  use_package_info_manual:
+    runs-on: windows-latest
+    if: github.event_name == 'workflow_dispatch'
+    defaults:
+      run:
+        shell: cmd
+    env:
+        PACKAGE_PATH: "${{ needs.get_commit_diff.outputs.package_path || inputs.PACKAGE_PATH  }}"
+        PACKAGE_NAME: "${{ needs.get_commit_diff.outputs.package_name || inputs.PACKAGE_NAME }}"
+        PACKAGE_VERSION: "${{ needs.get_commit_diff.outputs.package_version || inputs.PACKAGE_VERSION }}"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Debug Outputs from Previous Job
+        run: |
+          echo DEBUG: PACKAGE_PATH=%PACKAGE_PATH%
+          echo DEBUG: PACKAGE_NAME=%PACKAGE_NAME%
+          echo DEBUG: PACKAGE_VERSION=%PACKAGE_VERSION%
+
+      - name: Navigate to PACKAGE_PATH and list contents
+        run: |
+          if exist %PACKAGE_PATH% (
+            cd %PACKAGE_PATH%
+            dir
+          ) else (
+            echo Error: PACKAGE_PATH does not exist!
+            exit /b 1
+          )
