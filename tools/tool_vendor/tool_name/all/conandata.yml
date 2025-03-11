@@ -26,3 +26,5 @@ binaries:
     bin_folder: "bin"
   "9.7.0":
     bin_folder: "bin"
+  "9.8.0":
+    bin_folder: "bin"
