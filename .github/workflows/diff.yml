@@ -50,6 +50,12 @@ jobs:
       - name: Print pkglist contents
         run: type pkglist${{ github.ref_name }}.json
 
+      - name: Upload pkglist artifact
+        uses: actions/upload-artifact@v3
+        with:
+         name: pkglist-${{ github.ref_name }}
+         path: pkglist${{ github.ref_name }}.json
+
       - name: Install dependencies
         run: |
           python -m pip install requests
@@ -89,6 +95,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Download pkglist artifact
+        uses: actions/download-artifact@v3
+        with:
+         name: pkglist-main 
+
+      - name: Print pkglist contents
+        run: type pkglist${{ github.ref_name }}.json    
 
       - name: Debug Outputs from Previous Job
         run: |
