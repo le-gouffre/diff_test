@@ -51,7 +51,7 @@ jobs:
         run: type pkglist${{ github.ref_name }}.json
 
       - name: Upload pkglist artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.1
         with:
          name: pkglist-${{ github.ref_name }}
          path: pkglist${{ github.ref_name }}.json
