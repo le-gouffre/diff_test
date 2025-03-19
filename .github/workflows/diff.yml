@@ -44,6 +44,12 @@ jobs:
         run: |
           test.bat
 
+      - name: Print branch name
+        run: echo Branch name is ${{ github.ref_name }} > pkglist${{ github.ref_name }}.json
+
+      - name: Print pkglist contents
+        run: type pkglist${{ github.ref_name }}.json
+
       - name: Install dependencies
         run: |
           python -m pip install requests
